@@ -1,5 +1,5 @@
 <template>
-  <div class="p-7 bg-white rounded-md border border-gray-100 cursor-pointer">
+  <div class="p-7 bg-white rounded-md border border-gray-200 cursor-pointer">
     <img :src="recipe?.attributes.image" alt="Recipe Images" />
     <div class="my-4">
       <p class="text-xs bg-[#DDE6CE] inline px-3 py-1 rounded-2xl text-primary">
