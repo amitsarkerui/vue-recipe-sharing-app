@@ -114,6 +114,11 @@
           <recipe-card :recipe="recipe" />
         </div>
       </div>
+      <div class="flex flex-col items-center justify-center">
+        <button @click="toggleShow" class="btn btn-primary">
+          {{ showAll ? "Show Less..." : "Show More..." }}
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -151,6 +156,11 @@ export default {
     recipes() {
       const allRecipes = this.$store.getters.getAllRecipes;
       return this.showAll ? allRecipes : allRecipes.slice(0, 6);
+    },
+  },
+  methods: {
+    toggleShow() {
+      this.showAll = !this.showAll;
     },
   },
   mounted() {
