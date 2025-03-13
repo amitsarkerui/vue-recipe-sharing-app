@@ -100,7 +100,7 @@
   <section class="relative py-16">
     <!-- Background Pattern -->
     <div
-      class="absolute inset-0 bg-[url(/pattern-home.jpg)] bg-cover bg-center"
+      class="absolute h-[400px] inset-0 bg-[url(/pattern-home.jpg)] bg-cover bg-center"
     ></div>
 
     <!-- Content -->
@@ -109,6 +109,11 @@
       <h2 class="text-4xl font-bold text-center mt-2">Latest Recipes</h2>
 
       <!-- Recipe Grid -->
+      <div class="my-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div v-for="recipe in recipes" :key="recipe.id">
+          <recipe-card :recipe="recipe" />
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -122,9 +127,13 @@ import desserts from "/icons/Desserts .svg";
 import vegan from "/icons/Vegan .svg";
 import grilling from "/icons/Grilling .svg";
 import baking from "/icons/Baking .svg";
+import RecipeCard from "../components/RecipeCard.vue";
 
 export default {
   name: "Home",
+  components: {
+    RecipeCard,
+  },
   data() {
     return {
       breakFastIcons,
@@ -135,11 +144,13 @@ export default {
       vegan,
       grilling,
       baking,
+      showAll: false,
     };
   },
   computed: {
     recipes() {
-      return this.$store.getters.getAllRecipes;
+      const allRecipes = this.$store.getters.getAllRecipes;
+      return this.showAll ? allRecipes : allRecipes.slice(0, 6);
     },
   },
   mounted() {
