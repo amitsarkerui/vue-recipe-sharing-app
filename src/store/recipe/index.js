@@ -3,16 +3,19 @@ import Parse from "parse/dist/parse.min.js";
 const state = () => ({
   recipes: [],
   userById: {},
+  recipeById: {},
 });
 const getters = {
   getAllRecipes: (state) => {
     return state.recipes;
   },
   getUserById: (state) => state.userById,
+  getRecipeById: (state) => state.recipeById,
 };
 const mutations = {
   SetAllRecipes: (state, recipes) => (state.recipes = recipes),
   SetUserById: (state, user) => (state.userById = user),
+  SetRecipeById: (state, recipe) => (state.recipeById = recipe),
 };
 const actions = {
   async FETCH_ALL_RECIPE(context) {
@@ -31,6 +34,16 @@ const actions = {
       const userQuery = new Parse.Query("_User");
       const result = await userQuery.get(userId);
       context.commit("SetUserById", result);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  async FETCH_RECIPE_BY_ID(context, recipeId) {
+    try {
+      const recipeQuery = new Parse.Query("Recipe");
+      const res = await recipeQuery.get(recipeId);
+      console.log(res);
+      context.commit("SetRecipeById", res);
     } catch (error) {
       console.error(error);
     }
