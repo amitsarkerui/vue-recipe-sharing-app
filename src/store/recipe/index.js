@@ -4,6 +4,7 @@ const state = () => ({
   recipes: [],
   usersById: {},
   recipeById: {},
+  authorRecipes: [],
 });
 const getters = {
   getAllRecipes: (state) => {
@@ -11,6 +12,7 @@ const getters = {
   },
   getUserById: (state) => (userId) => state.usersById[userId],
   getRecipeById: (state) => state.recipeById,
+  getAuthorRecipes: (state) => state.authorRecipes,
 };
 const mutations = {
   SetAllRecipes: (state, recipes) => (state.recipes = recipes),
@@ -18,6 +20,7 @@ const mutations = {
     state.usersById = { ...state.usersById, [userId]: user };
   },
   SetRecipeById: (state, recipe) => (state.recipeById = recipe),
+  setAuthorRecipes: (state, recipes) => (state.authorRecipes = recipes),
 };
 const actions = {
   async FETCH_ALL_RECIPE(context) {
@@ -50,7 +53,7 @@ const actions = {
       console.error(error);
     }
   },
-  async FIND_RECIPES_BY_USER_ID(context, authorId) {
+  async FIND_AUTHOR_RECIPES(context, authorId) {
     console.log(authorId);
     const recipeQuery = new Parse.Query("Recipe");
     recipeQuery.equalTo("relatedUser", {
@@ -60,7 +63,7 @@ const actions = {
     });
     const res = await recipeQuery.find();
     console.log(res);
-    context.commit("SetRecipeByUserId", res);
+    context.commit("setAuthorRecipes", res);
   },
 };
 

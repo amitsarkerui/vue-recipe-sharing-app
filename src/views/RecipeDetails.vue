@@ -86,7 +86,10 @@
           </div>
         </div>
         <div>
-          <h3>More from this Author:</h3>
+          <h3 class="text-2xl text-gray-600 mb-7">More from this Author:</h3>
+          <div v-for="recipe in authorRecipes" :key="recipe.id">
+            <RecipeCardHorizontal :recipe="recipe" />
+          </div>
         </div>
       </div>
     </div>
@@ -94,8 +97,12 @@
 </template>
 
 <script>
+import RecipeCardHorizontal from "../components/RecipeCardHorizontal.vue";
 export default {
   name: "RecipeDetails",
+  components: {
+    RecipeCardHorizontal,
+  },
   data() {
     return {
       recipeId: null,
@@ -105,8 +112,14 @@ export default {
     recipe() {
       return this.$store.getters.getRecipeById;
     },
+
     author() {
-      return this.$store.getters.getUserById;
+      return this.$store.getters.getUserById(
+        this.recipe?.attributes?.relatedUser?.id
+      );
+    },
+    authorRecipes() {
+      return this.$store.getters.getAuthorRecipes;
     },
   },
   watch: {
@@ -117,7 +130,7 @@ export default {
           this.recipe?.attributes?.relatedUser.id
         );
         this.$store.dispatch(
-          "FIND_RECIPES_BY_USER_ID",
+          "FIND_AUTHOR_RECIPES",
           this.recipe?.attributes.relatedUser.id
         );
       }
