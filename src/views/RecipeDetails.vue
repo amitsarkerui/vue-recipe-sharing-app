@@ -85,7 +85,9 @@
             </div>
           </div>
         </div>
-        <div></div>
+        <div>
+          <h3>More from this Author:</h3>
+        </div>
       </div>
     </div>
   </div>
@@ -113,6 +115,10 @@ export default {
         this.$store.dispatch(
           "FIND_USER_BY_ID",
           this.recipe?.attributes?.relatedUser.id
+        );
+        this.$store.dispatch(
+          "FIND_RECIPES_BY_USER_ID",
+          this.recipe?.attributes.relatedUser.id
         );
       }
     },

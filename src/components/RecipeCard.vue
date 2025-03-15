@@ -1,7 +1,11 @@
 <template>
   <router-link :to="`/recipe/${recipe.id}`">
     <div class="p-7 bg-white rounded-md border border-gray-200 cursor-pointer">
-      <img :src="recipe?.attributes.image?._url" alt="Recipe Images" />
+      <img
+        class="h-[200px] w-full object-cover"
+        :src="recipe?.attributes.image?._url"
+        alt="Recipe Images"
+      />
       <div class="my-4">
         <p
           class="text-xs bg-[#DDE6CE] inline px-3 py-1 rounded-2xl text-primary"
@@ -42,7 +46,7 @@ export default {
       return this.recipe?.attributes?.relatedUser?.id;
     },
     author() {
-      return this.$store.getters.getUserById;
+      return this.$store.getters.getUserById(this.userId);
     },
   },
   mounted() {

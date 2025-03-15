@@ -2,19 +2,21 @@ import Parse from "parse/dist/parse.min.js";
 
 const state = () => ({
   recipes: [],
-  userById: {},
+  usersById: {},
   recipeById: {},
 });
 const getters = {
   getAllRecipes: (state) => {
     return state.recipes;
   },
-  getUserById: (state) => state.userById,
+  getUserById: (state) => (userId) => state.usersById[userId],
   getRecipeById: (state) => state.recipeById,
 };
 const mutations = {
   SetAllRecipes: (state, recipes) => (state.recipes = recipes),
-  SetUserById: (state, user) => (state.userById = user),
+  SetUserById: (state, { userId, user }) => {
+    state.usersById = { ...state.usersById, [userId]: user };
+  },
   SetRecipeById: (state, recipe) => (state.recipeById = recipe),
 };
 const actions = {
@@ -33,7 +35,7 @@ const actions = {
       console.log("userid", userId);
       const userQuery = new Parse.Query("_User");
       const result = await userQuery.get(userId);
-      context.commit("SetUserById", result);
+      context.commit("SetUserById", { userId, user: result });
     } catch (error) {
       console.error(error);
     }
@@ -47,6 +49,18 @@ const actions = {
     } catch (error) {
       console.error(error);
     }
+  },
+  async FIND_RECIPES_BY_USER_ID(context, authorId) {
+    console.log(authorId);
+    const recipeQuery = new Parse.Query("Recipe");
+    recipeQuery.equalTo("relatedUser", {
+      __type: "Pointer",
+      className: "_User",
+      objectId: authorId,
+    });
+    const res = await recipeQuery.find();
+    console.log(res);
+    context.commit("SetRecipeByUserId", res);
   },
 };
 
