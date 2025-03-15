@@ -1,4 +1,5 @@
 <template>
+  <!-- <router-link :to="`/recipe/${recipe.id}`"> -->
   <div class="p-3 bg-[#F7F4EE] my-5">
     <div class="flex gap-4 items-center">
       <img
@@ -6,9 +7,12 @@
         :src="recipe?.attributes?.image?._url"
         alt=""
       />
-      <p class="text-gray-600 font-semibold">{{ recipe?.attributes?.title }}</p>
+      <p class="text-gray-600 font-semibold">
+        {{ recipe?.attributes?.title }}
+      </p>
     </div>
   </div>
+  <!-- </router-link> -->
 </template>
 
 <script>

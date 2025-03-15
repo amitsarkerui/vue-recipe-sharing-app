@@ -88,7 +88,9 @@
         <div>
           <h3 class="text-2xl text-gray-600 mb-7">More from this Author:</h3>
           <div v-for="recipe in authorRecipes" :key="recipe.id">
-            <RecipeCardHorizontal :recipe="recipe" />
+            <router-link :to="`/recipe/${recipe.id}`">
+              <RecipeCardHorizontal :recipe="recipe" />
+            </router-link>
           </div>
         </div>
       </div>
@@ -123,6 +125,15 @@ export default {
     },
   },
   watch: {
+    "$route.params.id": {
+      immediate: true,
+      handler(newId) {
+        if (newId) {
+          this.recipeId = newId;
+          this.$store.dispatch("FETCH_RECIPE_BY_ID", newId);
+        }
+      },
+    },
     recipe(newRecipe) {
       if (newRecipe && newRecipe.attributes.relatedUser.id) {
         this.$store.dispatch(
