@@ -65,6 +65,25 @@ const actions = {
     console.log(res);
     context.commit("setAuthorRecipes", res);
   },
+  async CREATE_COMMENT(context, { recipeId, fromData }) {
+    try {
+      const comment = new Parse.Object("Comment");
+      console.log(recipeId, fromData);
+      const dataToSave = {
+        ...fromData,
+        relatedRecipe: {
+          __type: "Pointer",
+          className: "Recipe",
+          objectId: recipeId,
+        },
+      };
+      comment.set(dataToSave);
+      const res = await comment.save();
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
 
 export default {

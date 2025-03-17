@@ -72,7 +72,7 @@
               <p class="text-gray-500">{{ ingredient }}</p>
             </span>
           </div>
-          <div class="my-6">
+          <div class="mt-6 mb-12">
             <h3 class="text-xl text-primary mb-2">Steps:</h3>
             <div
               v-for="(step, index) in recipe?.attributes?.steps"
@@ -82,6 +82,45 @@
                 <p class="font-medium">Step {{ index + 1 }} :</p>
                 <p class="text-gray-500">{{ step }}</p>
               </span>
+            </div>
+          </div>
+          <hr class="text-gray-300" />
+          <!-- Comment Sections -->
+          <div class="my-10">
+            <h3 class="text-xl text-gray-600">Leave a comment</h3>
+            <div>
+              <form @submit.prevent="handleComment">
+                <div class="grid grid-cols-1 gap-8 md:grid-cols-2 my-5">
+                  <div class="w-full">
+                    <input
+                      v-model="formData.name"
+                      class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                      autocomplete=""
+                      placeholder="Name"
+                      type="text"
+                    />
+                  </div>
+                  <div class="w-full">
+                    <input
+                      v-model="formData.email"
+                      class="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                      autocomplete=""
+                      placeholder="Email"
+                      type="email"
+                    />
+                  </div>
+                </div>
+                <div class="w-full mb-5">
+                  <textarea
+                    v-model="formData.details"
+                    class="h-[150px] w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+                    autocomplete=""
+                    placeholder="Details"
+                    type="email"
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">Comment</button>
+              </form>
             </div>
           </div>
         </div>
@@ -108,6 +147,11 @@ export default {
   data() {
     return {
       recipeId: null,
+      formData: {
+        name: "",
+        email: "",
+        details: "",
+      },
     };
   },
   computed: {
@@ -122,6 +166,20 @@ export default {
     },
     authorRecipes() {
       return this.$store.getters.getAuthorRecipes;
+    },
+  },
+  methods: {
+    async handleComment() {
+      const res = await this.$store.dispatch("CREATE_COMMENT", {
+        recipeId: this.recipeId,
+        fromData: this.formData,
+      });
+      console.log(res);
+      if (res.id) {
+        this.formData.name = "";
+        this.formData.email = "";
+        this.formData.details = "";
+      }
     },
   },
   watch: {
