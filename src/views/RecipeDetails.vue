@@ -121,6 +121,20 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Comment</button>
               </form>
+              <hr class="text-gray-300 my-10 opacity-30" />
+              <div
+                v-for="comment in comments"
+                :key="comment.id"
+                class="mb-4 rounded-lg"
+              >
+                <div class="flex gap-10">
+                  <p class="text-gray-700 font-semibold">
+                    {{ comment.name }}
+                  </p>
+                  <p class="text-gray-500 text-sm">{{ comment.timeAgo }}</p>
+                </div>
+                <p class="text-gray-600">{{ comment.details }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -139,6 +153,7 @@
 
 <script>
 import RecipeCardHorizontal from "../components/RecipeCardHorizontal.vue";
+import { formatDistanceToNow } from "date-fns";
 export default {
   name: "RecipeDetails",
   components: {
@@ -167,14 +182,26 @@ export default {
     authorRecipes() {
       return this.$store.getters.getAuthorRecipes;
     },
+    comments() {
+      return this.$store.getters.getCurrentRecipeComments.map((comment) => ({
+        ...comment.attributes,
+        // details: comment.attributes?.details || "No details available",
+        timeAgo: formatDistanceToNow(
+          new Date(comment.attributes?.createdAt || new Date()),
+          {
+            addSuffix: true,
+          }
+        ),
+      }));
+    },
   },
   methods: {
     async handleComment() {
       const res = await this.$store.dispatch("CREATE_COMMENT", {
         recipeId: this.recipeId,
-        fromData: this.formData,
+        formData: this.formData,
       });
-      console.log(res);
+      // console.log(res);
       if (res.id) {
         this.formData.name = "";
         this.formData.email = "";
@@ -202,14 +229,19 @@ export default {
           "FIND_AUTHOR_RECIPES",
           this.recipe?.attributes.relatedUser.id
         );
+        this.$store.dispatch("FETCH_CURRENT_RECIPE_COMMENTS", this.recipeId);
+      }
+    },
+    comments(newComments) {
+      if (newComments) {
+        this.$store.dispatch("FETCH_CURRENT_RECIPE_COMMENTS", this.recipeId);
       }
     },
   },
   mounted() {
     this.recipeId = this.$route.params.id;
     this.$store.dispatch("FETCH_RECIPE_BY_ID", this.recipeId);
+    this.$store.dispatch("FETCH_CURRENT_RECIPE_COMMENTS", this.recipeId);
   },
 };
 </script>
-
-<style scoped></style>

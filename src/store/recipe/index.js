@@ -5,6 +5,7 @@ const state = () => ({
   usersById: {},
   recipeById: {},
   authorRecipes: [],
+  currentRecipeComments: [],
 });
 const getters = {
   getAllRecipes: (state) => {
@@ -13,6 +14,7 @@ const getters = {
   getUserById: (state) => (userId) => state.usersById[userId],
   getRecipeById: (state) => state.recipeById,
   getAuthorRecipes: (state) => state.authorRecipes,
+  getCurrentRecipeComments: (state) => state.currentRecipeComments,
 };
 const mutations = {
   SetAllRecipes: (state, recipes) => (state.recipes = recipes),
@@ -21,6 +23,8 @@ const mutations = {
   },
   SetRecipeById: (state, recipe) => (state.recipeById = recipe),
   setAuthorRecipes: (state, recipes) => (state.authorRecipes = recipes),
+  SetCurrentRecipeComment: (state, comments) =>
+    (state.currentRecipeComments = comments),
 };
 const actions = {
   async FETCH_ALL_RECIPE(context) {
@@ -65,12 +69,12 @@ const actions = {
     console.log(res);
     context.commit("setAuthorRecipes", res);
   },
-  async CREATE_COMMENT(context, { recipeId, fromData }) {
+  async CREATE_COMMENT(context, { recipeId, formData }) {
     try {
       const comment = new Parse.Object("Comment");
-      console.log(recipeId, fromData);
+      console.log(recipeId, formData);
       const dataToSave = {
-        ...fromData,
+        ...formData,
         relatedRecipe: {
           __type: "Pointer",
           className: "Recipe",
@@ -83,6 +87,17 @@ const actions = {
     } catch (error) {
       console.error(error);
     }
+  },
+  async FETCH_CURRENT_RECIPE_COMMENTS(context, recipeId) {
+    const commentQuery = new Parse.Query("Comment");
+    commentQuery.equalTo("relatedRecipe", {
+      __type: "Pointer",
+      className: "Recipe",
+      objectId: recipeId,
+    });
+    const res = await commentQuery.find();
+    console.log(res);
+    context.commit("SetCurrentRecipeComment", res);
   },
 };
 
